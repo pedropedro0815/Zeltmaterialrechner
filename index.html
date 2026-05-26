@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Materialrechner | Pfadfinder Schiefbahn</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <p class="eyebrow">Pfadfinder Schiefbahn</p>
+      <h1>Zeltlager Materialrechner</h1>
+      <p class="intro">
+        Wähle die benötigten Zelte aus. Die Stückliste wird automatisch zusammengefasst.
+      </p>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section aria-labelledby="tent-selection-title" class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Auswahl</p>
+          <h2 id="tent-selection-title">Zeltarten</h2>
+        </div>
+
+        <button id="resetButton" class="button button--secondary" type="button">
+          Zurücksetzen
+        </button>
+      </div>
+
+      <div id="tentCards" class="tent-grid" aria-live="polite"></div>
+    </section>
+
+    <section aria-labelledby="bom-title" class="panel bom-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">BOM</p>
+          <h2 id="bom-title">Stückliste</h2>
+        </div>
+
+        <button id="copyButton" class="button button--primary" type="button">
+          Stückliste kopieren
+        </button>
+      </div>
+
+      <div id="copyStatus" class="copy-status" role="status" aria-live="polite"></div>
+      <div id="bomOutput" class="bom-output"></div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Von Andre Flick für die Pfadfinder Schiefbahn</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

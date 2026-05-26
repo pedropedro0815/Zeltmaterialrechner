@@ -1,0 +1,381 @@
+:root {
+  --color-bg: #f4efe4;
+  --color-surface: #fffaf0;
+  --color-surface-strong: #f0e2c4;
+  --color-text: #2e2418;
+  --color-muted: #6c604c;
+  --color-primary: #486b38;
+  --color-primary-dark: #304b25;
+  --color-primary-soft: #dce8cf;
+  --color-brown: #8b653f;
+  --color-border: #ded0b4;
+  --color-danger: #8a3b2d;
+  --shadow-soft: 0 18px 45px rgba(46, 36, 24, 0.12);
+  --radius-large: 24px;
+  --radius-medium: 16px;
+  --radius-small: 10px;
+  --focus-ring: 0 0 0 4px rgba(72, 107, 56, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--color-bg);
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--color-text);
+  background:
+    radial-gradient(circle at top left, rgba(72, 107, 56, 0.18), transparent 34rem),
+    linear-gradient(180deg, #f7f1e6 0%, var(--color-bg) 48%, #efe4cf 100%);
+}
+
+button,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+button:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.app-header {
+  padding: 40px 18px 26px;
+}
+
+.app-header__inner {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--color-brown);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.1;
+}
+
+h1 {
+  max-width: 760px;
+  font-size: clamp(2.1rem, 6vw, 4.5rem);
+  letter-spacing: -0.055em;
+}
+
+h2 {
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  letter-spacing: -0.035em;
+}
+
+h3 {
+  font-size: 1.28rem;
+}
+
+.intro {
+  max-width: 650px;
+  margin: 18px 0 0;
+  color: var(--color-muted);
+  font-size: 1.1rem;
+}
+
+.app-shell {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto 38px;
+  display: grid;
+  gap: 22px;
+}
+
+.panel {
+  padding: clamp(18px, 3vw, 28px);
+  background: rgba(255, 250, 240, 0.92);
+  border: 1px solid rgba(222, 208, 180, 0.9);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(8px);
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.tent-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.tent-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background:
+    linear-gradient(145deg, rgba(255, 250, 240, 0.98), rgba(240, 226, 196, 0.68));
+}
+
+.tent-card__description {
+  margin: 10px 0 18px;
+  color: var(--color-muted);
+}
+
+.counter {
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
+  gap: 10px;
+  align-items: center;
+  margin-top: auto;
+}
+
+.counter__button {
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--color-primary);
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.counter__button:hover {
+  background: var(--color-primary-dark);
+}
+
+.counter__value {
+  min-height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--color-primary-dark);
+  background: var(--color-primary-soft);
+  font-size: 1.45rem;
+  font-weight: 900;
+}
+
+.option-field {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.option-field label {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.option-field select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 42px 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  color: var(--color-text);
+  background-color: #fffdf7;
+}
+
+.button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.button--primary {
+  color: #fff;
+  background: var(--color-primary);
+}
+
+.button--primary:hover {
+  background: var(--color-primary-dark);
+}
+
+.button--secondary {
+  color: var(--color-primary-dark);
+  background: var(--color-primary-soft);
+}
+
+.button--secondary:hover {
+  background: #cadfbc;
+}
+
+.copy-status {
+  min-height: 22px;
+  margin-top: -8px;
+  margin-bottom: 10px;
+  color: var(--color-primary-dark);
+  font-weight: 750;
+}
+
+.empty-state {
+  padding: 22px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-medium);
+  color: var(--color-muted);
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.bom-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: #fffdf7;
+}
+
+.bom-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+}
+
+.bom-table th,
+.bom-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.bom-table th {
+  color: var(--color-primary-dark);
+  background: var(--color-surface-strong);
+  font-size: 0.86rem;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.bom-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.bom-table td:nth-child(3),
+.bom-table th:nth-child(3) {
+  text-align: right;
+  font-weight: 900;
+}
+
+.source-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.source-list li + li {
+  margin-top: 4px;
+}
+
+.app-footer {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto 32px;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+}
+
+@media (max-width: 880px) {
+  .tent-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .section-heading .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-header {
+    padding-top: 28px;
+  }
+
+  .app-shell {
+    width: min(100% - 20px, 1120px);
+  }
+
+  .panel {
+    border-radius: 18px;
+  }
+
+  .counter {
+    grid-template-columns: 52px 1fr 52px;
+  }
+
+  .counter__button,
+  .counter__value {
+    min-height: 52px;
+    width: auto;
+    height: 52px;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .app-header,
+  .panel {
+    box-shadow: none;
+  }
+
+  .tent-grid,
+  .app-footer,
+  #copyButton,
+  #resetButton,
+  .copy-status {
+    display: none !important;
+  }
+
+  .app-shell {
+    width: 100%;
+    margin: 0;
+  }
+
+  .panel {
+    border: 0;
+    padding: 0;
+  }
+
+  .bom-table-wrapper {
+    border: 0;
+  }
+
+  .bom-table {
+    min-width: 0;
+  }
+}
