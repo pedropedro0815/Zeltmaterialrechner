@@ -281,7 +281,9 @@ function renderBom() {
   const isNarrowViewport = window.matchMedia("(max-width: 520px)").matches;
   const isVeryNarrowViewport = window.matchMedia("(max-width: 400px)").matches;
   const isIPhone14Or15Viewport = window.matchMedia("(min-width: 390px) and (max-width: 430px)").matches;
+  const areBothOptionalColumnsHidden = !bomColumnState.showMarking && !bomColumnState.showSources;
   const areAllOptionalColumnsOpen = bomColumnState.showMarking && bomColumnState.showSources;
+  const areSomeOptionalColumnsOpen = !areBothOptionalColumnsHidden && !areAllOptionalColumnsOpen;
   const shouldCompactSources = isNarrowViewport && areAllOptionalColumnsOpen;
 
   if (bomItems.length === 0) {
@@ -324,7 +326,7 @@ function renderBom() {
   const tableWrapper = document.createElement("div");
   tableWrapper.className = "bom-table-wrapper";
 
-  if (shouldCompactSources) {
+  if (isNarrowViewport && !areBothOptionalColumnsHidden) {
     tableWrapper.classList.add("bom-table-wrapper--mobile-scroll");
   }
 
@@ -339,6 +341,14 @@ function renderBom() {
     table.classList.add("bom-table--hide-sources");
   }
 
+  if (areBothOptionalColumnsHidden) {
+    table.classList.add("bom-table--default-columns");
+  }
+
+  if (areSomeOptionalColumnsOpen) {
+    table.classList.add("bom-table--partial-columns");
+  }
+
   if (areAllOptionalColumnsOpen) {
     table.classList.add("bom-table--all-columns-visible");
   }
@@ -348,7 +358,7 @@ function renderBom() {
       <tr>
         <th>Materialname</th>
         <th>Kennzeichnung</th>
-        <th>Gesamtmenge</th>
+        <th>Anzahl</th>
         <th>Herkunft</th>
       </tr>
     </thead>
@@ -400,16 +410,16 @@ function renderBom() {
   }
 
   tableWrapper.append(table);
+  bomOutputEl.replaceChildren(controls, tableWrapper);
 
-  if (shouldCompactSources) {
+  const shouldShowScrollHint = isNarrowViewport && !areBothOptionalColumnsHidden;
+
+  if (shouldShowScrollHint) {
     const scrollHint = document.createElement("p");
     scrollHint.className = "bom-scroll-hint";
     scrollHint.textContent = "Tipp: Seitlich wischen, um alle Spalten zu sehen.";
     bomOutputEl.replaceChildren(controls, scrollHint, tableWrapper);
-    return;
   }
-
-  bomOutputEl.replaceChildren(controls, tableWrapper);
 }
 
 function createTableCell(content) {
