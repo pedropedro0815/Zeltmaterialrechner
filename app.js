@@ -279,6 +279,10 @@ function calculateBom() {
 function renderBom() {
   const bomItems = calculateBom();
   const isNarrowViewport = window.matchMedia("(max-width: 520px)").matches;
+  const isVeryNarrowViewport = window.matchMedia("(max-width: 400px)").matches;
+  const isIPhone14Or15Viewport = window.matchMedia("(min-width: 390px) and (max-width: 430px)").matches;
+  const areAllOptionalColumnsOpen = bomColumnState.showMarking && bomColumnState.showSources;
+  const shouldCompactSources = isNarrowViewport && areAllOptionalColumnsOpen;
 
   if (bomItems.length === 0) {
     bomOutputEl.innerHTML = '<div class="empty-state">Bitte wähle zuerst mindestens ein Zelt aus.</div>';
@@ -320,6 +324,10 @@ function renderBom() {
   const tableWrapper = document.createElement("div");
   tableWrapper.className = "bom-table-wrapper";
 
+  if (shouldCompactSources) {
+    tableWrapper.classList.add("bom-table-wrapper--mobile-scroll");
+  }
+
   const table = document.createElement("table");
   table.className = "bom-table";
 
@@ -329,6 +337,10 @@ function renderBom() {
 
   if (!bomColumnState.showSources) {
     table.classList.add("bom-table--hide-sources");
+  }
+
+  if (areAllOptionalColumnsOpen) {
+    table.classList.add("bom-table--all-columns-visible");
   }
 
   table.innerHTML = `
@@ -351,12 +363,20 @@ function renderBom() {
     const sourceList = document.createElement("ul");
     sourceList.className = "source-list";
 
-    const maxVisibleSources = isNarrowViewport ? 2 : Number.POSITIVE_INFINITY;
+    const maxVisibleSources = isVeryNarrowViewport
+      ? 1
+      : isIPhone14Or15Viewport && areAllOptionalColumnsOpen
+        ? 1
+      : isNarrowViewport
+        ? 2
+        : Number.POSITIVE_INFINITY;
     const visibleSources = item.sources.slice(0, maxVisibleSources);
 
     for (const source of visibleSources) {
       const sourceItem = document.createElement("li");
-      sourceItem.textContent = `${source.tentCount} × ${source.tentLabel} à ${source.componentQty}`;
+      sourceItem.textContent = shouldCompactSources
+        ? `${source.tentCount}x ${source.tentLabel}`
+        : `${source.tentCount} × ${source.tentLabel} à ${source.componentQty}`;
       sourceList.append(sourceItem);
     }
 
@@ -380,6 +400,15 @@ function renderBom() {
   }
 
   tableWrapper.append(table);
+
+  if (shouldCompactSources) {
+    const scrollHint = document.createElement("p");
+    scrollHint.className = "bom-scroll-hint";
+    scrollHint.textContent = "Tipp: Seitlich wischen, um alle Spalten zu sehen.";
+    bomOutputEl.replaceChildren(controls, scrollHint, tableWrapper);
+    return;
+  }
+
   bomOutputEl.replaceChildren(controls, tableWrapper);
 }
 

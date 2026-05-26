@@ -289,6 +289,8 @@ h3 {
 .bom-table-wrapper {
   max-width: 100%;
   overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-medium);
   background: #fffdf7;
@@ -296,8 +298,12 @@ h3 {
 
 .bom-table {
   width: 100%;
-  min-width: min(100%, 680px);
+  min-width: 560px;
   border-collapse: collapse;
+}
+
+.bom-table.bom-table--all-columns-visible {
+  min-width: 700px;
 }
 
 .bom-table th,
@@ -353,11 +359,20 @@ h3 {
   margin-left: -14px;
 }
 
+.bom-scroll-hint {
+  margin: 0 0 8px;
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
 .app-footer {
   width: min(1120px, calc(100% - (var(--layout-gutter) * 2)));
-  margin: 0 auto 32px;
+  margin: 0 auto;
+  padding: 4px 0 24px;
+  text-align: center;
   color: var(--color-muted);
-  font-size: 0.92rem;
+  font-size: 0.8rem;
 }
 
 @media (max-width: 880px) {
@@ -395,34 +410,35 @@ h3 {
   }
 
   .bom-table {
-    min-width: 0;
-    table-layout: fixed;
+    min-width: 500px;
+    table-layout: auto;
   }
 
   .bom-table th,
   .bom-table td {
     padding: 10px 8px;
     font-size: 0.86rem;
-  }
-
-  .bom-table th:nth-child(1),
-  .bom-table td:nth-child(1) {
-    width: 48%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .bom-table th:nth-child(3),
   .bom-table td:nth-child(3) {
-    width: 22%;
     white-space: nowrap;
+    width: 1%;
   }
 
-  .bom-table th:nth-child(4),
-  .bom-table td:nth-child(4) {
-    width: 30%;
+  .bom-table.bom-table--all-columns-visible {
+    min-width: 680px;
   }
 
   .source-list {
     padding-left: 14px;
+  }
+
+  .bom-table-wrapper--mobile-scroll {
+    padding-bottom: 4px;
   }
 
   .column-toggle-button {
@@ -458,9 +474,41 @@ h3 {
     font-size: 0.81rem;
   }
 
+  .bom-table {
+    min-width: 460px;
+  }
+
+  .bom-table.bom-table--all-columns-visible {
+    min-width: 620px;
+  }
+
   .column-toggle-button {
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media (min-width: 390px) and (max-width: 430px) {
+  .bom-table {
+    min-width: 490px;
+  }
+
+  .bom-table.bom-table--all-columns-visible {
+    min-width: 610px;
+  }
+
+  .bom-table th,
+  .bom-table td {
+    padding: 9px 7px;
+    font-size: 0.83rem;
+  }
+
+  .column-toggle-button {
+    font-size: 0.86rem;
+  }
+
+  .bom-scroll-hint {
+    font-size: 0.76rem;
   }
 }
 
