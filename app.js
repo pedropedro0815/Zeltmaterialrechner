@@ -9,18 +9,26 @@ const tentTypes = {
   jurte: {
     label: "Jurte",
     description: "Normale Jurte",
-    components: [
-      { id: "seitenplane_jurte", label: "Seitenplane Jurte", marking: "Kennzeichnung später eintragen", qty: 6 },
-      { id: "dachplane_jurte", label: "Dachplane Jurte", marking: "Kennzeichnung später eintragen", qty: 6 },
-      { id: "seitenstange", label: "Seitenstange", marking: "Kennzeichnung später eintragen", qty: 12 }
-    ],
+    variants: {
+      standard: {
+        label: "Standard",
+        components: [
+          { id: "kreuz_jurte", label: "Kreuz", marking: "Kennzeichnung später eintragen", qty: 1 },
+          { id: "seitenstange_klein_jurte", label: "Seitenstange klein (Jurte)", marking: "Kennzeichnung später eintragen", qty: 12 },
+          { id: "abspannschnur_jurte", label: "Abspannschnur", marking: "Kennzeichnung später eintragen", qty: 12 },
+          { id: "hering_jurte", label: "Hering", marking: "Kennzeichnung später eintragen", qty: 13 }
+        ]
+      }
+    },
     poleOptions: {
       fixed: [
-        { id: "mittelstange_fest", label: "Feste Mittelstange", marking: "Kennzeichnung später eintragen", qty: 1 }
+        { id: "mittelstange_set_jurte", label: "Mittelstangen-Set Jurte (2 Stangen + 1 Verbinder)", marking: "Kennzeichnung später eintragen", qty: 1 },
+        { id: "schraubfuss_jurte", label: "Schraubfuß", marking: "Kennzeichnung später eintragen", qty: 1 }
       ],
       tripod: [
-        { id: "dreibein_stange", label: "Dreibein-Stange", marking: "Kennzeichnung später eintragen", qty: 3 },
-        { id: "dreibein_verbinder", label: "Dreibein-Verbinder", marking: "Kennzeichnung später eintragen", qty: 1 }
+        { id: "dreibein_stange_jurte", label: "Dreibein-Stange", marking: "Kennzeichnung später eintragen", qty: 3 },
+        { id: "dreibein_verbinder_jurte", label: "Dreibein-Verbinder", marking: "Kennzeichnung später eintragen", qty: 1 },
+        { id: "dreibein_fuss_jurte", label: "Dreibein-Fuß", marking: "Kennzeichnung später eintragen", qty: 3 }
       ]
     }
   },
@@ -28,18 +36,41 @@ const tentTypes = {
   grossraumjurte: {
     label: "Großraumjurte",
     description: "Große Jurte",
-    components: [
-      { id: "seitenplane_grossraum", label: "Seitenplane Großraumjurte", marking: "Kennzeichnung später eintragen", qty: 8 },
-      { id: "dachplane_grossraum", label: "Dachplane Großraumjurte", marking: "Kennzeichnung später eintragen", qty: 8 },
-      { id: "seitenstange", label: "Seitenstange", marking: "Kennzeichnung später eintragen", qty: 16 }
-    ],
+    variants: {
+      spinne: {
+        label: "Spinne",
+        components: [
+          { id: "metallspinne_grossraum", label: "Metallspinne", marking: "Kennzeichnung später eintragen", qty: 1 },
+          { id: "stange_spinne_grossraum", label: "Stange (Spinne)", marking: "Kennzeichnung später eintragen", qty: 9 },
+          { id: "verbinder_spinne_grossraum", label: "Verbinder (Spinne)", marking: "Kennzeichnung später eintragen", qty: 6 },
+          { id: "fuss_spinne_grossraum", label: "Fuß (Spinne)", marking: "Kennzeichnung später eintragen", qty: 3 },
+          { id: "seitenstange_grossraum", label: "Seitenstange Großraumjurte", marking: "Kennzeichnung später eintragen", qty: 16 },
+          { id: "abspannschnur_grossraum", label: "Abspannschnur", marking: "Kennzeichnung später eintragen", qty: 16 },
+          { id: "hering_grossraum", label: "Hering", marking: "Kennzeichnung später eintragen", qty: 19 }
+        ]
+      },
+      teller: {
+        label: "Teller",
+        components: [
+          { id: "teller_set_grossraum", label: "Teller + 8 Ketten + Karabiner", marking: "Kennzeichnung später eintragen", qty: 1 },
+          { id: "stange_teller_grossraum", label: "Stange (Teller)", marking: "Kennzeichnung später eintragen", qty: 6 },
+          { id: "verbinder_teller_grossraum", label: "Verbinder (Teller)", marking: "Kennzeichnung später eintragen", qty: 3 },
+          { id: "fuss_teller_grossraum", label: "Fuß (Teller)", marking: "Kennzeichnung später eintragen", qty: 3 },
+          { id: "seitenstange_grossraum", label: "Seitenstange Großraumjurte", marking: "Kennzeichnung später eintragen", qty: 16 },
+          { id: "abspannschnur_grossraum", label: "Abspannschnur", marking: "Kennzeichnung später eintragen", qty: 16 },
+          { id: "hering_grossraum", label: "Hering", marking: "Kennzeichnung später eintragen", qty: 17 }
+        ]
+      }
+    },
     poleOptions: {
       fixed: [
-        { id: "mittelstange_fest_grossraum", label: "Feste Mittelstange Großraumjurte", marking: "Kennzeichnung später eintragen", qty: 1 }
+        { id: "mittelstange_set_grossraum", label: "Mittelstangen-Set Großraumjurte (2 Stangen + 1 Verbinder)", marking: "Kennzeichnung später eintragen", qty: 1 },
+        { id: "schraubfuss_grossraum", label: "Schraubfuß", marking: "Kennzeichnung später eintragen", qty: 1 }
       ],
       tripod: [
-        { id: "dreibein_stange", label: "Dreibein-Stange", marking: "Kennzeichnung später eintragen", qty: 3 },
-        { id: "dreibein_verbinder", label: "Dreibein-Verbinder", marking: "Kennzeichnung später eintragen", qty: 1 }
+        { id: "dreibein_stange_grossraum", label: "Dreibein-Stange", marking: "Kennzeichnung später eintragen", qty: 3 },
+        { id: "dreibein_verbinder_grossraum", label: "Dreibein-Verbinder", marking: "Kennzeichnung später eintragen", qty: 1 },
+        { id: "dreibein_fuss_grossraum", label: "Dreibein-Fuß", marking: "Kennzeichnung später eintragen", qty: 3 }
       ]
     }
   },
@@ -94,10 +125,27 @@ function createInitialState() {
       tentId,
       {
         count: 0,
-        poleOption: "fixed"
+        poleOption: "fixed",
+        variant: getDefaultVariantId(tentId)
       }
     ])
   );
+}
+
+function getDefaultVariantId(tentId) {
+  const tent = tentTypes[tentId];
+  const variantIds = tent?.variants ? Object.keys(tent.variants) : [];
+  return variantIds.length > 0 ? variantIds[0] : null;
+}
+
+function getSelectedVariantId(tentId, tentState) {
+  const tent = tentTypes[tentId];
+
+  if (!tent?.variants) {
+    return null;
+  }
+
+  return tent.variants[tentState.variant] ? tentState.variant : getDefaultVariantId(tentId);
 }
 
 function restoreState() {
@@ -122,6 +170,9 @@ function restoreState() {
       state[tentId].poleOption = tentTypes[tentId].poleOptions[savedTentState.poleOption]
         ? savedTentState.poleOption
         : "fixed";
+
+      const selectedVariantId = getSelectedVariantId(tentId, savedTentState);
+      state[tentId].variant = selectedVariantId;
     }
   } catch (error) {
     console.warn("Gespeicherter Zustand konnte nicht geladen werden.", error);
@@ -182,7 +233,7 @@ function renderTentCards() {
 
     const label = document.createElement("label");
     label.setAttribute("for", selectId);
-    label.textContent = "Mittelstangen-Variante";
+    label.textContent = "Aufbauoption";
 
     const select = document.createElement("select");
     select.id = selectId;
@@ -195,7 +246,7 @@ function renderTentCards() {
 
     const fixedOption = document.createElement("option");
     fixedOption.value = "fixed";
-    fixedOption.textContent = "Feste Mittelstange";
+    fixedOption.textContent = "Mittelstange";
 
     const tripodOption = document.createElement("option");
     tripodOption.value = "tripod";
@@ -204,7 +255,43 @@ function renderTentCards() {
     select.append(fixedOption, tripodOption);
     optionField.append(label, select);
 
+    let variantField = null;
+    const variantIds = tent.variants ? Object.keys(tent.variants) : [];
+
+    if (variantIds.length > 1) {
+      variantField = document.createElement("div");
+      variantField.className = "option-field";
+
+      const variantSelectId = `variant-${tentId}`;
+      const variantLabel = document.createElement("label");
+      variantLabel.setAttribute("for", variantSelectId);
+      variantLabel.textContent = "Variante";
+
+      const variantSelect = document.createElement("select");
+      variantSelect.id = variantSelectId;
+      variantSelect.value = getSelectedVariantId(tentId, state[tentId]);
+      variantSelect.addEventListener("change", (event) => {
+        state[tentId].variant = event.target.value;
+        persistState();
+        renderBom();
+      });
+
+      for (const variantId of variantIds) {
+        const variantOption = document.createElement("option");
+        variantOption.value = variantId;
+        variantOption.textContent = tent.variants[variantId].label;
+        variantSelect.append(variantOption);
+      }
+
+      variantField.append(variantLabel, variantSelect);
+    }
+
     card.append(title, description, counter, optionField);
+
+    if (variantField) {
+      card.append(variantField);
+    }
+
     tentCardsEl.append(card);
   }
 }
@@ -220,6 +307,7 @@ function resetApp() {
   for (const tentId of Object.keys(state)) {
     state[tentId].count = 0;
     state[tentId].poleOption = "fixed";
+    state[tentId].variant = getDefaultVariantId(tentId);
   }
 
   persistState();
@@ -239,8 +327,16 @@ function calculateBom() {
     }
 
     const tent = tentTypes[tentId];
+    const selectedVariantId = getSelectedVariantId(tentId, tentState);
+    const variantCount = tent.variants ? Object.keys(tent.variants).length : 0;
+    const selectedVariantLabel = selectedVariantId && variantCount > 1
+      ? tent.variants[selectedVariantId].label
+      : "";
+    const variantComponents = selectedVariantId
+      ? tent.variants[selectedVariantId].components
+      : tent.components ?? [];
     const selectedPoleComponents = tent.poleOptions[tentState.poleOption] ?? [];
-    const allComponents = [...tent.components, ...selectedPoleComponents];
+    const allComponents = [...variantComponents, ...selectedPoleComponents];
 
     for (const component of allComponents) {
       const totalQty = component.qty * count;
@@ -250,6 +346,7 @@ function calculateBom() {
         existingItem.qty += totalQty;
         existingItem.sources.push({
           tentLabel: tent.label,
+          variantLabel: selectedVariantLabel,
           tentCount: count,
           componentQty: component.qty,
           selectedPoleOption: tentState.poleOption
@@ -263,6 +360,7 @@ function calculateBom() {
           sources: [
             {
               tentLabel: tent.label,
+              variantLabel: selectedVariantLabel,
               tentCount: count,
               componentQty: component.qty,
               selectedPoleOption: tentState.poleOption
@@ -384,9 +482,13 @@ function renderBom() {
 
     for (const source of visibleSources) {
       const sourceItem = document.createElement("li");
+      const sourceLabel = source.variantLabel
+        ? `${source.tentLabel} (${source.variantLabel})`
+        : source.tentLabel;
+
       sourceItem.textContent = shouldCompactSources
-        ? `${source.tentCount}x ${source.tentLabel}`
-        : `${source.tentCount} × ${source.tentLabel} à ${source.componentQty}`;
+        ? `${source.tentCount}x ${sourceLabel}`
+        : `${source.tentCount} × ${sourceLabel} à ${source.componentQty}`;
       sourceList.append(sourceItem);
     }
 
@@ -449,7 +551,13 @@ function createBomText() {
 
   for (const item of bomItems) {
     const sources = item.sources
-      .map((source) => `${source.tentCount} × ${source.tentLabel} à ${source.componentQty}`)
+      .map((source) => {
+        const sourceLabel = source.variantLabel
+          ? `${source.tentLabel} (${source.variantLabel})`
+          : source.tentLabel;
+
+        return `${source.tentCount} × ${sourceLabel} à ${source.componentQty}`;
+      })
       .join("; ");
 
     lines.push(`${item.qty} × ${item.label}`);
