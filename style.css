@@ -248,6 +248,33 @@ h3 {
   background: rgba(255, 255, 255, 0.48);
 }
 
+.bom-column-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.column-toggle-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-primary-dark);
+  background: #fff;
+  font-weight: 700;
+}
+
+.column-toggle-button[aria-pressed="true"] {
+  color: #fff;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.column-toggle-button:hover {
+  border-color: var(--color-primary);
+}
+
 .bom-table-wrapper {
   overflow-x: auto;
   border: 1px solid var(--color-border);
@@ -279,6 +306,16 @@ h3 {
 
 .bom-table tr:last-child td {
   border-bottom: 0;
+}
+
+.bom-table.bom-table--hide-marking th:nth-child(2),
+.bom-table.bom-table--hide-marking td:nth-child(2) {
+  display: none;
+}
+
+.bom-table.bom-table--hide-sources th:nth-child(4),
+.bom-table.bom-table--hide-sources td:nth-child(4) {
+  display: none;
 }
 
 .bom-table td:nth-child(3),
@@ -357,7 +394,8 @@ h3 {
   .app-footer,
   #copyButton,
   #resetButton,
-  .copy-status {
+  .copy-status,
+  .bom-column-toggles {
     display: none !important;
   }
 

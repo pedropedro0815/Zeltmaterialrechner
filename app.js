@@ -66,6 +66,10 @@ const tentTypes = {
 const STORAGE_KEY = "pfadfinder-schiefbahn-materialrechner-state";
 
 const state = createInitialState();
+const bomColumnState = {
+  showMarking: false,
+  showSources: false
+};
 
 const tentCardsEl = document.querySelector("#tentCards");
 const bomOutputEl = document.querySelector("#bomOutput");
@@ -283,11 +287,48 @@ function renderBom() {
 
   copyButtonEl.disabled = false;
 
+  const controls = document.createElement("div");
+  controls.className = "bom-column-toggles";
+
+  const markingToggle = document.createElement("button");
+  markingToggle.className = "column-toggle-button";
+  markingToggle.type = "button";
+  markingToggle.setAttribute("aria-pressed", String(bomColumnState.showMarking));
+  markingToggle.textContent = bomColumnState.showMarking
+    ? "Kennzeichnung einklappen"
+    : "Kennzeichnung ausklappen";
+  markingToggle.addEventListener("click", () => {
+    bomColumnState.showMarking = !bomColumnState.showMarking;
+    renderBom();
+  });
+
+  const sourcesToggle = document.createElement("button");
+  sourcesToggle.className = "column-toggle-button";
+  sourcesToggle.type = "button";
+  sourcesToggle.setAttribute("aria-pressed", String(bomColumnState.showSources));
+  sourcesToggle.textContent = bomColumnState.showSources
+    ? "Herkunft einklappen"
+    : "Herkunft ausklappen";
+  sourcesToggle.addEventListener("click", () => {
+    bomColumnState.showSources = !bomColumnState.showSources;
+    renderBom();
+  });
+
+  controls.append(markingToggle, sourcesToggle);
+
   const tableWrapper = document.createElement("div");
   tableWrapper.className = "bom-table-wrapper";
 
   const table = document.createElement("table");
   table.className = "bom-table";
+
+  if (!bomColumnState.showMarking) {
+    table.classList.add("bom-table--hide-marking");
+  }
+
+  if (!bomColumnState.showSources) {
+    table.classList.add("bom-table--hide-sources");
+  }
 
   table.innerHTML = `
     <thead>
@@ -326,7 +367,7 @@ function renderBom() {
   }
 
   tableWrapper.append(table);
-  bomOutputEl.replaceChildren(tableWrapper);
+  bomOutputEl.replaceChildren(controls, tableWrapper);
 }
 
 function createTableCell(content) {
