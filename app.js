@@ -278,6 +278,7 @@ function calculateBom() {
 
 function renderBom() {
   const bomItems = calculateBom();
+  const isNarrowViewport = window.matchMedia("(max-width: 520px)").matches;
 
   if (bomItems.length === 0) {
     bomOutputEl.innerHTML = '<div class="empty-state">Bitte wähle zuerst mindestens ein Zelt aus.</div>';
@@ -350,10 +351,22 @@ function renderBom() {
     const sourceList = document.createElement("ul");
     sourceList.className = "source-list";
 
-    for (const source of item.sources) {
+    const maxVisibleSources = isNarrowViewport ? 2 : Number.POSITIVE_INFINITY;
+    const visibleSources = item.sources.slice(0, maxVisibleSources);
+
+    for (const source of visibleSources) {
       const sourceItem = document.createElement("li");
       sourceItem.textContent = `${source.tentCount} × ${source.tentLabel} à ${source.componentQty}`;
       sourceList.append(sourceItem);
+    }
+
+    const hiddenSourcesCount = item.sources.length - visibleSources.length;
+
+    if (hiddenSourcesCount > 0) {
+      const moreItem = document.createElement("li");
+      moreItem.className = "source-list__more";
+      moreItem.textContent = `+${hiddenSourcesCount} weitere Herkunft${hiddenSourcesCount === 1 ? "" : "en"}`;
+      sourceList.append(moreItem);
     }
 
     row.append(
