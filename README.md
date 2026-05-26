@@ -205,4 +205,4 @@ Dadurch kann die App einfach kopiert, lokal geöffnet oder als statische Seite e
 
 Interne Nutzung für die Pfadfinder Schiefbahn.
 
-Falls das Projekt veröffentlicht werden soll, kann später eine konkrete Open-Source-Lizenz ergänzt werden, zum Beispiel MIT.
+Falls das Projekt veröffentlicht werden soll, kann später eine konkrete Open-Source-Lizenz ergänzt werden, zum Beispiel MIT..
