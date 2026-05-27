@@ -22,7 +22,10 @@ Die App läuft vollständig im Browser und benötigt kein Backend, keine Datenba
   - Gesamtmenge
   - Herkunft der Menge je Zeltart
 - Button zum Zurücksetzen aller Mengen
-- Button zum Kopieren der Stückliste als Klartext
+- Adaptiver Export der Stückliste:
+  - Mobile: natives Teilen (Web Share), falls verfügbar
+  - Sonst: Kopieren in die Zwischenablage
+  - Zusätzliche Desktop-Aktion: Textansicht in neuem Tab
 - Mobilfreundliches Design
 - Einfache Druckansicht per CSS
 
@@ -45,6 +48,7 @@ Enthält die Grundstruktur der App:
 - Auswahlbereich für die Zeltarten
 - Stücklistenbereich
 - Buttons für Zurücksetzen und Kopieren
+- zusätzlicher Button für Textansicht (Desktop)
 - Einbindung von `style.css` und `app.js`
 
 ### `style.css`
@@ -66,6 +70,7 @@ Enthält die komplette Logik:
 - Berechnung der Stückliste
 - Rendering der Karten und Tabelle
 - Kopierfunktion
+- adaptive Export-Orchestrierung (Share, Clipboard, Fallback, Textansicht)
 - Reset-Funktion
 - optionale Speicherung im `localStorage`
 
@@ -173,7 +178,20 @@ Die App nutzt moderne Browser-Funktionen:
 - `Map`
 - `localStorage`
 - `navigator.clipboard` mit Fallback
+- `navigator.share` (wenn verfügbar und sicherer Kontext)
 - semantisches HTML
+
+## Export-Flow und Plattformgrenzen
+
+Der Export folgt einem Best-Effort-Ansatz innerhalb der Browser-Sicherheitsgrenzen:
+
+1. Auf Mobilgeräten wird bevorzugt das native Share-Sheet genutzt (`navigator.share`), aber nur aus einem direkten Nutzerklick heraus.
+2. Wenn Teilen nicht verfügbar ist oder abgebrochen wird, versucht die App automatisch den Clipboard-Flow.
+3. Wenn moderne Clipboard-APIs nicht verfügbar sind, wird ein Fallback über `execCommand("copy")` versucht.
+4. Falls auch der Fallback scheitert, zeigt die App eine klare manuelle Anweisung.
+5. Auf Desktop gibt es zusätzlich die Aktion „Textansicht öffnen", die den vollständigen BOM-Text in einem neuen Tab selektierbar darstellt.
+
+Wichtig: Ein automatisches Öffnen eines nativen Editors mit automatischem Einfügen ist in Browsern aus Sicherheitsgründen nicht zuverlässig möglich und daher bewusst nicht Teil der App.
 
 Empfohlen werden aktuelle Versionen von Chrome, Edge, Firefox oder Safari.
 

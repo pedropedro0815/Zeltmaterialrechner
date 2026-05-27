@@ -138,6 +138,13 @@ h3 {
   margin-bottom: 22px;
 }
 
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .tent-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -397,6 +404,14 @@ h3 {
 @media (max-width: 880px) {
   .tent-grid {
     grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    justify-content: flex-start;
   }
 
   .section-heading {

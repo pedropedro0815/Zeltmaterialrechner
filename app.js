@@ -106,6 +106,7 @@ const tentCardsEl = document.querySelector("#tentCards");
 const bomOutputEl = document.querySelector("#bomOutput");
 const resetButtonEl = document.querySelector("#resetButton");
 const copyButtonEl = document.querySelector("#copyButton");
+const openTextViewButtonEl = document.querySelector("#openTextViewButton");
 const copyStatusEl = document.querySelector("#copyStatus");
 
 init();
@@ -116,7 +117,13 @@ function init() {
   renderBom();
 
   resetButtonEl.addEventListener("click", resetApp);
-  copyButtonEl.addEventListener("click", copyBomToClipboard);
+  copyButtonEl.addEventListener("click", handlePrimaryExportAction);
+  openTextViewButtonEl.addEventListener("click", openBomTextView);
+  updateExportButtons();
+
+  window.addEventListener("resize", () => {
+    updateExportButtons();
+  });
 }
 
 function createInitialState() {
@@ -387,10 +394,14 @@ function renderBom() {
   if (bomItems.length === 0) {
     bomOutputEl.innerHTML = '<div class="empty-state">Bitte wähle zuerst mindestens ein Zelt aus.</div>';
     copyButtonEl.disabled = true;
+    openTextViewButtonEl.disabled = true;
+    updateExportButtons();
     return;
   }
 
   copyButtonEl.disabled = false;
+  openTextViewButtonEl.disabled = false;
+  updateExportButtons();
 
   const controls = document.createElement("div");
   controls.className = "bom-column-toggles";
@@ -572,30 +583,189 @@ function createBomText() {
 async function copyBomToClipboard() {
   const text = createBomText();
 
+  return copyBomTextToClipboard(text, {
+    successMessage: "Stückliste wurde kopiert.",
+    fallbackMessage: "Stückliste wurde kopiert (Fallback)."
+  });
+}
+
+function hasBomItems() {
+  return calculateBom().length > 0;
+}
+
+function isLikelyMobileDevice() {
+  const matchesMobileAgent = /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(navigator.userAgent);
+  const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+  return matchesMobileAgent || hasCoarsePointer;
+}
+
+function canUseWebShareForText() {
+  return window.isSecureContext && typeof navigator.share === "function";
+}
+
+function shouldPreferNativeShare() {
+  return isLikelyMobileDevice() && canUseWebShareForText();
+}
+
+function updateExportButtons() {
+  copyButtonEl.textContent = shouldPreferNativeShare()
+    ? "Stückliste teilen"
+    : "Stückliste kopieren";
+
+  openTextViewButtonEl.hidden = isLikelyMobileDevice();
+}
+
+async function handlePrimaryExportAction() {
+  if (!hasBomItems()) {
+    showCopyStatus("Keine Stückliste vorhanden.");
+    return;
+  }
+
+  const text = createBomText();
+
+  if (shouldPreferNativeShare()) {
+    try {
+      await navigator.share({
+        title: "Stückliste",
+        text
+      });
+      showCopyStatus("Stückliste wurde geteilt.");
+      return;
+    } catch (error) {
+      const copied = await copyBomTextToClipboard(text, {
+        successMessage: "Teilen abgebrochen. Stückliste wurde kopiert.",
+        fallbackMessage: "Teilen nicht möglich. Stückliste wurde kopiert (Fallback).",
+        manualMessage: "Teilen nicht möglich. Bitte manuell markieren und kopieren."
+      });
+
+      if (copied) {
+        return;
+      }
+
+      console.warn("Teilen und Kopieren sind fehlgeschlagen.", error);
+      return;
+    }
+  }
+
+  await copyBomTextToClipboard(text, {
+    successMessage: "Stückliste wurde kopiert.",
+    fallbackMessage: "Stückliste wurde kopiert (Fallback)."
+  });
+}
+
+async function copyBomTextToClipboard(text, options = {}) {
+  const successMessage = options.successMessage ?? "Stückliste wurde kopiert.";
+  const fallbackMessage = options.fallbackMessage ?? "Stückliste wurde kopiert (Fallback).";
+  const manualMessage = options.manualMessage ?? "Kopieren nicht möglich. Bitte manuell markieren und kopieren.";
+
   try {
+    if (!navigator.clipboard?.writeText) {
+      throw new Error("Clipboard API nicht verfügbar");
+    }
+
     await navigator.clipboard.writeText(text);
-    showCopyStatus("Stückliste wurde kopiert.");
+    showCopyStatus(successMessage);
+    return true;
   } catch (error) {
     console.warn("Zwischenablage nicht verfügbar, Fallback wird genutzt.", error);
-    copyTextFallback(text);
+    const copiedWithFallback = copyTextFallback(text);
+
+    if (copiedWithFallback) {
+      showCopyStatus(fallbackMessage);
+      return true;
+    }
+
+    showCopyStatus(manualMessage);
+    return false;
   }
 }
 
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function openBomTextView() {
+  if (!hasBomItems()) {
+    showCopyStatus("Keine Stückliste vorhanden.");
+    return;
+  }
+
+  const text = createBomText();
+  const openedWindow = window.open("", "_blank");
+
+  if (!openedWindow) {
+    showCopyStatus("Textansicht wurde vom Browser blockiert. Bitte Pop-ups erlauben.");
+    return;
+  }
+
+  const escapedText = escapeHtml(text);
+
+  openedWindow.document.write(`<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stückliste</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      color: #2e2418;
+      background: #f7f1e6;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 1.4rem;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      border: 1px solid #ded0b4;
+      border-radius: 12px;
+      background: #fffdf7;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-family: "Cascadia Mono", Consolas, monospace;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Stückliste (Textansicht)</h1>
+  <pre>${escapedText}</pre>
+</body>
+</html>`);
+  openedWindow.document.close();
+  showCopyStatus("Textansicht wurde in einem neuen Tab geöffnet.");
+}
+
 function copyTextFallback(text) {
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.setAttribute("readonly", "");
-  textarea.style.position = "fixed";
-  textarea.style.left = "-9999px";
-
-  document.body.append(textarea);
-  textarea.select();
-
   try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.top = "0";
+    textarea.style.left = "0";
+    textarea.style.opacity = "0";
+    textarea.style.pointerEvents = "none";
+
+    document.body.append(textarea);
+    textarea.focus();
+    textarea.setSelectionRange(0, textarea.value.length);
+
     const successful = document.execCommand("copy");
-    showCopyStatus(successful ? "Stückliste wurde kopiert." : "Kopieren nicht möglich.");
-  } finally {
     textarea.remove();
+    return successful;
+  } catch (error) {
+    console.warn("Fallback-Kopieren ist fehlgeschlagen.", error);
+    return false;
   }
 }
 
