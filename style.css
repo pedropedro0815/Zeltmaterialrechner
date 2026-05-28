@@ -490,6 +490,17 @@ h3 {
     table-layout: fixed;
   }
 
+  .bom-table.bom-table--default-columns th:nth-child(1),
+  .bom-table.bom-table--default-columns td:nth-child(1) {
+    width: auto;
+  }
+
+  .bom-table.bom-table--default-columns th:nth-child(2),
+  .bom-table.bom-table--default-columns td:nth-child(2) {
+    width: 84px;
+    min-width: 84px;
+  }
+
   .bom-table th,
   .bom-table td {
     hyphens: auto;
