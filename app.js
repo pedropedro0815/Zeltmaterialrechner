@@ -124,6 +124,9 @@ function init() {
   window.addEventListener("resize", () => {
     updateExportButtons();
   });
+
+  window.addEventListener("scroll", updateScrollProgress, { passive: true });
+  updateScrollProgress();
 }
 
 function createInitialState() {
@@ -197,9 +200,10 @@ function persistState() {
 function renderTentCards() {
   tentCardsEl.innerHTML = "";
 
-  for (const [tentId, tent] of Object.entries(tentTypes)) {
+  for (const [index, [tentId, tent]] of Object.entries(tentTypes).entries()) {
     const card = document.createElement("article");
     card.className = "tent-card";
+    card.style.setProperty("--card-index", String(index));
 
     const title = document.createElement("h3");
     title.textContent = tent.label;
@@ -389,7 +393,7 @@ function renderBom() {
   const areBothOptionalColumnsHidden = !bomColumnState.showMarking && !bomColumnState.showSources;
   const areAllOptionalColumnsOpen = bomColumnState.showMarking && bomColumnState.showSources;
   const areSomeOptionalColumnsOpen = !areBothOptionalColumnsHidden && !areAllOptionalColumnsOpen;
-  const shouldCompactSources = isNarrowViewport && areAllOptionalColumnsOpen;
+  const shouldCompactSources = isNarrowViewport && bomColumnState.showSources;
 
   if (bomItems.length === 0) {
     bomOutputEl.innerHTML = '<div class="empty-state">Bitte wähle zuerst mindestens ein Zelt aus.</div>';
@@ -466,8 +470,8 @@ function renderBom() {
     <thead>
       <tr>
         <th>Materialname</th>
-        <th>Kennzeichnung</th>
         <th>Anzahl</th>
+        <th>Kennzeichnung</th>
         <th>Herkunft</th>
       </tr>
     </thead>
@@ -514,8 +518,8 @@ function renderBom() {
 
     row.append(
       createTableCell(item.label),
-      createTableCell(item.marking),
       createTableCell(String(item.qty)),
+      createTableCell(item.marking),
       createTableCell(sourceList)
     );
 
@@ -533,6 +537,18 @@ function renderBom() {
     scrollHint.textContent = "Tipp: Seitlich wischen, um alle Spalten zu sehen.";
     bomOutputEl.replaceChildren(controls, scrollHint, tableWrapper);
   }
+}
+
+function updateScrollProgress() {
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+  if (maxScroll <= 0) {
+    document.documentElement.style.setProperty("--scroll-progress", "0");
+    return;
+  }
+
+  const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+  document.documentElement.style.setProperty("--scroll-progress", progress.toFixed(4));
 }
 
 function createTableCell(content) {
