@@ -111,8 +111,8 @@ const undoResetButtonEl = document.querySelector("#undoResetButton");
 const copyButtonEl = document.querySelector("#copyButton");
 const openTextViewButtonEl = document.querySelector("#openTextViewButton");
 const copyStatusEl = document.querySelector("#copyStatus");
-const themeModeButtonEl = document.querySelector("#themeModeButton");
-const contrastButtonEl = document.querySelector("#contrastButton");
+const themeModeButtonEls = Array.from(document.querySelectorAll('[data-action="theme"]'));
+const contrastButtonEls = Array.from(document.querySelectorAll('[data-action="contrast"]'));
 const themeColorMetaEl = document.querySelector('meta[name="theme-color"]');
 const prefersDarkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 let lastStateBeforeReset = null;
@@ -131,8 +131,12 @@ function init() {
   undoResetButtonEl.addEventListener("click", undoReset);
   copyButtonEl.addEventListener("click", handlePrimaryExportAction);
   openTextViewButtonEl.addEventListener("click", openBomTextView);
-  themeModeButtonEl.addEventListener("click", cycleThemeMode);
-  contrastButtonEl.addEventListener("click", toggleContrastMode);
+  themeModeButtonEls.forEach((button) => {
+    button.addEventListener("click", cycleThemeMode);
+  });
+  contrastButtonEls.forEach((button) => {
+    button.addEventListener("click", toggleContrastMode);
+  });
   updateExportButtons();
 
   window.addEventListener("resize", () => {
@@ -289,12 +293,28 @@ function updatePreferenceButtons() {
     dark: "Dunkel"
   };
 
-  themeModeButtonEl.textContent = `Design: ${modeLabels[preferences.themeMode]}`;
-  themeModeButtonEl.setAttribute("aria-pressed", String(preferences.themeMode !== "system"));
+  const modeIcons = {
+    system: "⚙",
+    light: "☀",
+    dark: "☾"
+  };
+
+  themeModeButtonEls.forEach((button) => {
+    button.textContent = `Design: ${modeLabels[preferences.themeMode]}`;
+    button.setAttribute("aria-pressed", String(preferences.themeMode !== "system"));
+    button.setAttribute("data-icon", modeIcons[preferences.themeMode]);
+    button.setAttribute("aria-label", `Designmodus wechseln (aktuell: ${modeLabels[preferences.themeMode]})`);
+    button.title = `Design: ${modeLabels[preferences.themeMode]}`;
+  });
 
   const isHighContrast = preferences.contrastMode === "high";
-  contrastButtonEl.textContent = isHighContrast ? "Kontrast: Hoch" : "Kontrast: Normal";
-  contrastButtonEl.setAttribute("aria-pressed", String(isHighContrast));
+  contrastButtonEls.forEach((button) => {
+    button.textContent = isHighContrast ? "Kontrast: Hoch" : "Kontrast: Normal";
+    button.setAttribute("aria-pressed", String(isHighContrast));
+    button.setAttribute("data-icon", isHighContrast ? "◑" : "◐");
+    button.setAttribute("aria-label", isHighContrast ? "Kontrast umschalten (aktuell: hoch)" : "Kontrast umschalten (aktuell: normal)");
+    button.title = isHighContrast ? "Kontrast: Hoch" : "Kontrast: Normal";
+  });
 }
 
 function applyPreferences() {

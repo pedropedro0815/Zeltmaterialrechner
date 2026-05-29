@@ -22,11 +22,11 @@
         <li>Stückliste kopieren, teilen oder als Textansicht öffnen.</li>
       </ol>
 
-      <div class="preference-toolbar" aria-label="Anzeigeoptionen">
-        <button id="themeModeButton" class="button button--secondary preference-button" type="button" aria-pressed="false">
+      <div class="preference-toolbar preference-toolbar--header" aria-label="Anzeigeoptionen">
+        <button id="themeModeButton" class="button button--secondary preference-button" type="button" data-action="theme" aria-pressed="false">
           Design: System
         </button>
-        <button id="contrastButton" class="button button--secondary preference-button" type="button" aria-pressed="false">
+        <button id="contrastButton" class="button button--secondary preference-button" type="button" data-action="contrast" aria-pressed="false">
           Kontrast: Normal
         </button>
       </div>
@@ -88,6 +88,15 @@
   <footer class="app-footer">
     <p>Von Andre F.</p>
   </footer>
+
+  <div class="preference-toolbar preference-toolbar--mobile" aria-label="Anzeigeoptionen mobil">
+    <button id="themeModeButtonMobile" class="button button--secondary preference-button" type="button" data-action="theme" aria-pressed="false">
+      Design: System
+    </button>
+    <button id="contrastButtonMobile" class="button button--secondary preference-button" type="button" data-action="contrast" aria-pressed="false">
+      Kontrast: Normal
+    </button>
+  </div>
 
   <script src="app.js"></script>
 </body>
