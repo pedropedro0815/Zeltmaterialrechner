@@ -22,11 +22,16 @@ Die App läuft vollständig im Browser und benötigt kein Backend, keine Datenba
   - Gesamtmenge
   - Herkunft der Menge je Zeltart
 - Button zum Zurücksetzen aller Mengen
+- Rückgängig-Funktion nach Zurücksetzen (ein Schritt)
 - Adaptiver Export der Stückliste:
   - Mobile: natives Teilen (Web Share), falls verfügbar
   - Sonst: Kopieren in die Zwischenablage
   - Zusätzliche Desktop-Aktion: Textansicht in neuem Tab
 - Mobilfreundliches Design
+- Zusätzliche Hilfetexte für Aufbauoptionen und Varianten
+- Verbesserte Lesbarkeit (größere Schriften und Bedienelemente)
+- Nutzerpräferenz für Designmodus (System, Hell, Dunkel)
+- Optionaler hoher Kontrast als gespeicherte Einstellung
 - Einfache Druckansicht per CSS
 
 ## Projektstruktur

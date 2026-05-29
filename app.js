@@ -95,8 +95,10 @@ const tentTypes = {
 };
 
 const STORAGE_KEY = "pfadfinder-schiefbahn-materialrechner-state";
+const PREFERENCES_STORAGE_KEY = "pfadfinder-schiefbahn-materialrechner-preferences";
 
 const state = createInitialState();
+const preferences = createInitialPreferences();
 const bomColumnState = {
   showMarking: false,
   showSources: false
@@ -105,20 +107,32 @@ const bomColumnState = {
 const tentCardsEl = document.querySelector("#tentCards");
 const bomOutputEl = document.querySelector("#bomOutput");
 const resetButtonEl = document.querySelector("#resetButton");
+const undoResetButtonEl = document.querySelector("#undoResetButton");
 const copyButtonEl = document.querySelector("#copyButton");
 const openTextViewButtonEl = document.querySelector("#openTextViewButton");
 const copyStatusEl = document.querySelector("#copyStatus");
+const themeModeButtonEl = document.querySelector("#themeModeButton");
+const contrastButtonEl = document.querySelector("#contrastButton");
+const themeColorMetaEl = document.querySelector('meta[name="theme-color"]');
+const prefersDarkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+let lastStateBeforeReset = null;
 
 init();
 
 function init() {
+  restorePreferences();
+  applyPreferences();
+
   restoreState();
   renderTentCards();
   renderBom();
 
   resetButtonEl.addEventListener("click", resetApp);
+  undoResetButtonEl.addEventListener("click", undoReset);
   copyButtonEl.addEventListener("click", handlePrimaryExportAction);
   openTextViewButtonEl.addEventListener("click", openBomTextView);
+  themeModeButtonEl.addEventListener("click", cycleThemeMode);
+  contrastButtonEl.addEventListener("click", toggleContrastMode);
   updateExportButtons();
 
   window.addEventListener("resize", () => {
@@ -127,6 +141,12 @@ function init() {
 
   window.addEventListener("scroll", updateScrollProgress, { passive: true });
   updateScrollProgress();
+
+  prefersDarkQuery.addEventListener("change", () => {
+    if (preferences.themeMode === "system") {
+      applyPreferences();
+    }
+  });
 }
 
 function createInitialState() {
@@ -140,6 +160,13 @@ function createInitialState() {
       }
     ])
   );
+}
+
+function createInitialPreferences() {
+  return {
+    themeMode: "system",
+    contrastMode: "normal"
+  };
 }
 
 function getDefaultVariantId(tentId) {
@@ -156,6 +183,26 @@ function getSelectedVariantId(tentId, tentState) {
   }
 
   return tent.variants[tentState.variant] ? tentState.variant : getDefaultVariantId(tentId);
+}
+
+function getPoleOptionHelpText(poleOption) {
+  if (poleOption === "tripod") {
+    return "Dreibein: Drei Stangen tragen die Mitte und sind oft stabiler bei Wind.";
+  }
+
+  return "Mittelstange: Klassischer Aufbau mit einer zentralen Stange in der Mitte.";
+}
+
+function getVariantHelpText(tentId, variantId) {
+  if (tentId !== "grossraumjurte") {
+    return "";
+  }
+
+  if (variantId === "teller") {
+    return "Teller: Aufbau mit Teller-Set und Ketten.";
+  }
+
+  return "Spinne: Aufbau mit Metallspinne und passenden Verbindern.";
 }
 
 function restoreState() {
@@ -197,6 +244,86 @@ function persistState() {
   }
 }
 
+function restorePreferences() {
+  try {
+    const savedPreferences = JSON.parse(localStorage.getItem(PREFERENCES_STORAGE_KEY));
+
+    if (!savedPreferences || typeof savedPreferences !== "object") {
+      return;
+    }
+
+    const allowedThemeModes = ["system", "light", "dark"];
+    const allowedContrastModes = ["normal", "high"];
+
+    preferences.themeMode = allowedThemeModes.includes(savedPreferences.themeMode)
+      ? savedPreferences.themeMode
+      : "system";
+    preferences.contrastMode = allowedContrastModes.includes(savedPreferences.contrastMode)
+      ? savedPreferences.contrastMode
+      : "normal";
+  } catch (error) {
+    console.warn("Einstellungen konnten nicht geladen werden.", error);
+  }
+}
+
+function persistPreferences() {
+  try {
+    localStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
+  } catch (error) {
+    console.warn("Einstellungen konnten nicht gespeichert werden.", error);
+  }
+}
+
+function getResolvedTheme() {
+  if (preferences.themeMode === "system") {
+    return prefersDarkQuery.matches ? "dark" : "light";
+  }
+
+  return preferences.themeMode;
+}
+
+function updatePreferenceButtons() {
+  const modeLabels = {
+    system: "System",
+    light: "Hell",
+    dark: "Dunkel"
+  };
+
+  themeModeButtonEl.textContent = `Design: ${modeLabels[preferences.themeMode]}`;
+  themeModeButtonEl.setAttribute("aria-pressed", String(preferences.themeMode !== "system"));
+
+  const isHighContrast = preferences.contrastMode === "high";
+  contrastButtonEl.textContent = isHighContrast ? "Kontrast: Hoch" : "Kontrast: Normal";
+  contrastButtonEl.setAttribute("aria-pressed", String(isHighContrast));
+}
+
+function applyPreferences() {
+  const resolvedTheme = getResolvedTheme();
+  document.documentElement.setAttribute("data-theme", resolvedTheme);
+  document.documentElement.setAttribute("data-contrast", preferences.contrastMode);
+
+  if (themeColorMetaEl) {
+    themeColorMetaEl.content = resolvedTheme === "dark" ? "#0f1714" : "#1f4d40";
+  }
+
+  updatePreferenceButtons();
+}
+
+function cycleThemeMode() {
+  const modes = ["system", "light", "dark"];
+  const currentIndex = modes.indexOf(preferences.themeMode);
+  const nextIndex = (currentIndex + 1) % modes.length;
+  preferences.themeMode = modes[nextIndex];
+  persistPreferences();
+  applyPreferences();
+}
+
+function toggleContrastMode() {
+  preferences.contrastMode = preferences.contrastMode === "high" ? "normal" : "high";
+  persistPreferences();
+  applyPreferences();
+}
+
 function renderTentCards() {
   tentCardsEl.innerHTML = "";
 
@@ -222,6 +349,7 @@ function renderTentCards() {
     minusButton.setAttribute("aria-label", `${tent.label} reduzieren`);
     minusButton.disabled = state[tentId].count === 0;
     minusButton.addEventListener("click", () => updateCount(tentId, -1));
+    minusButton.addEventListener("keydown", (event) => handleCounterKeydown(event, tentId));
 
     const countValue = document.createElement("div");
     countValue.className = "counter__value";
@@ -234,6 +362,7 @@ function renderTentCards() {
     plusButton.textContent = "+";
     plusButton.setAttribute("aria-label", `${tent.label} erhöhen`);
     plusButton.addEventListener("click", () => updateCount(tentId, 1));
+    plusButton.addEventListener("keydown", (event) => handleCounterKeydown(event, tentId));
 
     counter.append(minusButton, countValue, plusButton);
 
@@ -248,10 +377,12 @@ function renderTentCards() {
 
     const select = document.createElement("select");
     select.id = selectId;
-    select.value = state[tentId].poleOption;
+    const poleHelpId = `${selectId}-help`;
+    select.setAttribute("aria-describedby", poleHelpId);
     select.addEventListener("change", (event) => {
       state[tentId].poleOption = event.target.value;
       persistState();
+      renderTentCards();
       renderBom();
     });
 
@@ -264,7 +395,18 @@ function renderTentCards() {
     tripodOption.textContent = "Dreibein-Kombination";
 
     select.append(fixedOption, tripodOption);
-    optionField.append(label, select);
+
+    const selectedPoleOption = tent.poleOptions[state[tentId].poleOption]
+      ? state[tentId].poleOption
+      : "fixed";
+    select.value = selectedPoleOption;
+
+    const poleHelp = document.createElement("p");
+    poleHelp.className = "option-help";
+    poleHelp.id = poleHelpId;
+    poleHelp.textContent = getPoleOptionHelpText(selectedPoleOption);
+
+    optionField.append(label, select, poleHelp);
 
     let variantField = null;
     const variantIds = tent.variants ? Object.keys(tent.variants) : [];
@@ -280,10 +422,12 @@ function renderTentCards() {
 
       const variantSelect = document.createElement("select");
       variantSelect.id = variantSelectId;
-      variantSelect.value = getSelectedVariantId(tentId, state[tentId]);
+      const variantHelpId = `${variantSelectId}-help`;
+      variantSelect.setAttribute("aria-describedby", variantHelpId);
       variantSelect.addEventListener("change", (event) => {
         state[tentId].variant = event.target.value;
         persistState();
+        renderTentCards();
         renderBom();
       });
 
@@ -294,7 +438,18 @@ function renderTentCards() {
         variantSelect.append(variantOption);
       }
 
-      variantField.append(variantLabel, variantSelect);
+      const selectedVariantId = getSelectedVariantId(tentId, state[tentId]);
+      variantSelect.value = selectedVariantId;
+
+      const variantHelp = document.createElement("p");
+      variantHelp.className = "option-help";
+      variantHelp.id = variantHelpId;
+      variantHelp.textContent = getVariantHelpText(
+        tentId,
+        selectedVariantId
+      );
+
+      variantField.append(variantLabel, variantSelect, variantHelp);
     }
 
     card.append(title, description, counter, optionField);
@@ -314,7 +469,25 @@ function updateCount(tentId, delta) {
   renderBom();
 }
 
+function handleCounterKeydown(event, tentId) {
+  const increaseKeys = ["ArrowUp", "ArrowRight", "+", "Add"];
+  const decreaseKeys = ["ArrowDown", "ArrowLeft", "-", "Subtract"];
+
+  if (increaseKeys.includes(event.key)) {
+    event.preventDefault();
+    updateCount(tentId, 1);
+    return;
+  }
+
+  if (decreaseKeys.includes(event.key)) {
+    event.preventDefault();
+    updateCount(tentId, -1);
+  }
+}
+
 function resetApp() {
+  lastStateBeforeReset = JSON.parse(JSON.stringify(state));
+
   for (const tentId of Object.keys(state)) {
     state[tentId].count = 0;
     state[tentId].poleOption = "fixed";
@@ -324,7 +497,30 @@ function resetApp() {
   persistState();
   renderTentCards();
   renderBom();
+  undoResetButtonEl.hidden = false;
   showCopyStatus("");
+}
+
+function undoReset() {
+  if (!lastStateBeforeReset) {
+    showCopyStatus("Kein Zurücksetzen zum Rückgängig machen vorhanden.");
+    return;
+  }
+
+  for (const tentId of Object.keys(state)) {
+    state[tentId].count = Math.max(0, lastStateBeforeReset[tentId]?.count ?? 0);
+    state[tentId].poleOption = lastStateBeforeReset[tentId]?.poleOption ?? "fixed";
+    state[tentId].variant = getSelectedVariantId(tentId, {
+      variant: lastStateBeforeReset[tentId]?.variant
+    });
+  }
+
+  persistState();
+  renderTentCards();
+  renderBom();
+  undoResetButtonEl.hidden = true;
+  lastStateBeforeReset = null;
+  showCopyStatus("Zurücksetzen wurde rückgängig gemacht.");
 }
 
 function calculateBom() {
@@ -415,8 +611,8 @@ function renderBom() {
   markingToggle.type = "button";
   markingToggle.setAttribute("aria-pressed", String(bomColumnState.showMarking));
   markingToggle.textContent = bomColumnState.showMarking
-    ? "Kennzeichnung einklappen"
-    : "Kennzeichnung ausklappen";
+    ? "Kennzeichnung ausblenden"
+    : "Kennzeichnung anzeigen";
   markingToggle.addEventListener("click", () => {
     bomColumnState.showMarking = !bomColumnState.showMarking;
     renderBom();
@@ -427,8 +623,8 @@ function renderBom() {
   sourcesToggle.type = "button";
   sourcesToggle.setAttribute("aria-pressed", String(bomColumnState.showSources));
   sourcesToggle.textContent = bomColumnState.showSources
-    ? "Herkunft einklappen"
-    : "Herkunft ausklappen";
+    ? "Herkunft ausblenden"
+    : "Herkunft anzeigen";
   sourcesToggle.addEventListener("click", () => {
     bomColumnState.showSources = !bomColumnState.showSources;
     renderBom();
@@ -534,7 +730,7 @@ function renderBom() {
   if (shouldShowScrollHint) {
     const scrollHint = document.createElement("p");
     scrollHint.className = "bom-scroll-hint";
-    scrollHint.textContent = "Tipp: Seitlich wischen, um alle Spalten zu sehen.";
+    scrollHint.textContent = "Tipp: Seitlich wischen, um weitere Spalten sichtbar zu machen.";
     bomOutputEl.replaceChildren(controls, scrollHint, tableWrapper);
   }
 }

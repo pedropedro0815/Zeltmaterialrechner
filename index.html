@@ -14,9 +14,21 @@
     <div class="app-header__inner">
       <p class="eyebrow">Pfadfinder Schiefbahn</p>
       <h1>Schwarzzelt Materialrechner</h1>
-      <p class="intro">
-        Wähle die benötigten Zelte aus. Die Stückliste wird automatisch zusammengefasst.
-      </p>
+      <p class="intro">So gehst du vor:</p>
+      <ol class="intro-steps">
+        <li>Zeltart auswählen und Menge festlegen.</li>
+        <li>Aufbauoption (Mittelstange oder Dreibein) einstellen.</li>
+        <li>Stückliste kopieren, teilen oder als Textansicht öffnen.</li>
+      </ol>
+
+      <div class="preference-toolbar" aria-label="Anzeigeoptionen">
+        <button id="themeModeButton" class="button button--secondary preference-button" type="button" aria-pressed="false">
+          Design: System
+        </button>
+        <button id="contrastButton" class="button button--secondary preference-button" type="button" aria-pressed="false">
+          Kontrast: Normal
+        </button>
+      </div>
     </div>
   </header>
 
@@ -28,12 +40,26 @@
           <h2 id="tent-selection-title">Zeltarten</h2>
         </div>
 
-        <button id="resetButton" class="button button--secondary" type="button">
-          Zurücksetzen
-        </button>
+        <div class="selection-actions">
+          <button id="resetButton" class="button button--secondary" type="button">
+            Zurücksetzen
+          </button>
+          <button id="undoResetButton" class="button button--secondary" type="button" hidden>
+            Rückgängig
+          </button>
+        </div>
       </div>
 
       <div id="tentCards" class="tent-grid" aria-live="polite"></div>
+
+      <details class="setup-help">
+        <summary>Hilfe zu Aufbauoptionen</summary>
+        <ul>
+          <li><strong>Mittelstange:</strong> klassischer Aufbau mit einer zentralen Stange.</li>
+          <li><strong>Dreibein:</strong> Aufbau mit drei Stangen, oft stabil bei Wind.</li>
+          <li><strong>Spinne/Teller:</strong> zwei Aufbauvarianten der Großraumjurte.</li>
+        </ul>
+      </details>
     </section>
 
     <section aria-labelledby="bom-title" class="panel bom-panel">
